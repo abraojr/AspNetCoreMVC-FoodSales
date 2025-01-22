@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesFood.Context;
+using SalesFood.Repositories;
+using SalesFood.Repositories.Interfaces;
 
 namespace SalesFood;
 public class Startup
@@ -15,6 +17,10 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddTransient<ICategoryRepository, CategoryRepository>();
+        services.AddTransient<IFoodRepository, FoodRepository>();
+
         services.AddControllersWithViews();
     }
 
