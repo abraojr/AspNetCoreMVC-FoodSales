@@ -1,0 +1,14 @@
+﻿@model IEnumerable<SalesFood.Models.Food>
+
+<div>
+    <h2>All Foods</h2>
+</div>
+
+@foreach (var food in Model)
+{
+    <div>
+        <h4>@food.Name</h4>
+        <p><img src="@food.ImageUrl" /></p>
+        <h3>Price : @food.Price.ToString("c")</h3>
+    </div>
+}
