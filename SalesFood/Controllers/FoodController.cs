@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SalesFood.Repositories.Interfaces;
+using SalesFood.ViewModels;
 
 namespace SalesFood.Controllers;
 
@@ -14,8 +15,11 @@ public class FoodController : Controller
 
     public IActionResult List()
     {
-        var foods = _foodRepository.Foods;
-        return View(foods);
+        var foodListViewModel = new FoodListViewModel();
+        foodListViewModel.Foods = _foodRepository.Foods;
+        foodListViewModel.CurrentCategory = "Current Category";
+
+        return View(foodListViewModel);
     }
 }
 
