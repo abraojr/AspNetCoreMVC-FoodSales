@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesFood.Context;
+using SalesFood.Models;
 using SalesFood.Repositories;
 using SalesFood.Repositories.Interfaces;
 
@@ -20,8 +21,8 @@ public class Startup
 
         services.AddTransient<ICategoryRepository, CategoryRepository>();
         services.AddTransient<IFoodRepository, FoodRepository>();
-
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
 
         services.AddControllersWithViews();
 
