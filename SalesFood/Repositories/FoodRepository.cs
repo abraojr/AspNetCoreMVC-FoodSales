@@ -16,7 +16,7 @@ public class FoodRepository : IFoodRepository
 
     public IEnumerable<Food> Foods => _context.Foods.Include(c => c.Category);
 
-    public IEnumerable<Food> FavoriteFoods => _context.Foods.Where(p => p.IsFavoriteFood).Include(c => c.IsFavoriteFood);
+    public IEnumerable<Food> FavoriteFoods => _context.Foods.Where(p => p.IsFavoriteFood).Include(c => c.Category);
 
     public Food GetFoodById(int id) => _context.Foods.FirstOrDefault(f => f.FoodId == id);
 }

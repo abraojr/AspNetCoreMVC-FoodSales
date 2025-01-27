@@ -1,3 +1,13 @@
-﻿<h1>View Index</h1>
+﻿@model HomeViewModel
 
 <partial name="_Carousel" />
+
+<h2>Favorites of the week</h2>
+<h4>Hungry?</h4>
+
+<div class="row">
+    @foreach (var food in Model.FavoriteFoods)
+    {
+        <partial name="_FoodSummary" for="@food" />
+    }
+</div>
