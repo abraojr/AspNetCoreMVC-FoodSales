@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SalesFood.Models;
 using SalesFood.Repositories.Interfaces;
 using SalesFood.ViewModels;
 
@@ -13,13 +14,40 @@ public class FoodController : Controller
         _foodRepository = foodRepository;
     }
 
-    public IActionResult List()
+    public IActionResult List(string category)
     {
-        var foodListViewModel = new FoodListViewModel();
-        foodListViewModel.Foods = _foodRepository.Foods;
-        foodListViewModel.CurrentCategory = "Current Category";
+        IEnumerable<Food> foods;
+        string currentCategory = string.Empty;
+
+        if (string.IsNullOrEmpty(category))
+        {
+            foods = _foodRepository.Foods.OrderBy(x => x.FoodId);
+            currentCategory = "All Food";
+        }
+        else
+        {
+            if (string.Equals("Normal", category, StringComparison.OrdinalIgnoreCase))
+            {
+                foods = _foodRepository.Foods
+                            .Where(x => x.Category.Name.Equals("Normal"))
+                            .OrderBy(x => x.Name);
+            }
+            else
+            {
+                foods = _foodRepository.Foods
+                           .Where(x => x.Category.Name.Equals("Natural"))
+                           .OrderBy(x => x.Name);
+            }
+
+            currentCategory = category;
+        }
+
+        var foodListViewModel = new FoodListViewModel
+        {
+            Foods = foods,
+            CurrentCategory = currentCategory
+        };
 
         return View(foodListViewModel);
     }
 }
-
