@@ -22,22 +22,13 @@ public class FoodController : Controller
         if (string.IsNullOrEmpty(category))
         {
             foods = _foodRepository.Foods.OrderBy(x => x.FoodId);
-            currentCategory = "All Food";
+            currentCategory = "All Products";
         }
         else
         {
-            if (string.Equals("Normal", category, StringComparison.OrdinalIgnoreCase))
-            {
-                foods = _foodRepository.Foods
-                            .Where(x => x.Category.Name.Equals("Normal"))
-                            .OrderBy(x => x.Name);
-            }
-            else
-            {
-                foods = _foodRepository.Foods
-                           .Where(x => x.Category.Name.Equals("Natural"))
+            foods = _foodRepository.Foods
+                           .Where(x => x.Category.Name.Equals(category))
                            .OrderBy(x => x.Name);
-            }
 
             currentCategory = category;
         }
