@@ -2,9 +2,9 @@
 
 <div class="container">
     <div class="row">
-        <img src="~/images/Full-Cart-icon.png" alt="Full Cart icon" />
 
         <div>
+            <img src="~/images/Full-Cart-icon.png" width="30" height="35" alt="Full Cart icon" />
             <h4>Your Shopping Cart : </h4>
         </div>
 
@@ -28,7 +28,7 @@
                         <td class="text-center">
                             <a asp-controller="ShoppingCart" asp-action="RemoveItemFromShoppingCart"
                                asp-route-foodId="@item.Food.FoodId">
-                                <img src="~/images/delete.png" alt="Delete" />
+                                <img src="~/images/delete.png" width="20px" height="20px" alt="Delete" />
                             </a>
                         </td>
                     </tr>

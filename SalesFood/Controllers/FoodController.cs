@@ -41,4 +41,11 @@ public class FoodController : Controller
 
         return View(foodListViewModel);
     }
+
+    public IActionResult Details(int foodId)
+    {
+        var food = _foodRepository.Foods.FirstOrDefault(x => x.FoodId == foodId);
+
+        return View(food);
+    }
 }
