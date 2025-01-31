@@ -48,4 +48,36 @@ public class FoodController : Controller
 
         return View(food);
     }
+
+    public ViewResult Search(string searchString)
+    {
+        IEnumerable<Food> foods;
+        string currentCategory = string.Empty;
+
+        if (string.IsNullOrEmpty(searchString))
+        {
+            foods = _foodRepository.Foods.OrderBy(x => x.FoodId);
+            currentCategory = "All Food";
+        }
+        else
+        {
+            foods = _foodRepository.Foods
+                        .Where(x => x.Name.ToLower().Contains(searchString.ToLower()));
+
+            if (foods.Any())
+            {
+                currentCategory = "Food";
+            }
+            else
+            {
+                currentCategory = "Product not found";
+            }
+        }
+
+        return View("~/Views/Food/List.cshtml", new FoodListViewModel
+        {
+            Foods = foods,
+            CurrentCategory = currentCategory
+        });
+    }
 }
