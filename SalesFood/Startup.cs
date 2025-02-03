@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SalesFood.Context;
 using SalesFood.Models;
 using SalesFood.Repositories;
@@ -18,6 +19,10 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
         services.AddTransient<ICategoryRepository, CategoryRepository>();
         services.AddTransient<IFoodRepository, FoodRepository>();
@@ -52,6 +57,7 @@ public class Startup
 
         app.UseSession();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
