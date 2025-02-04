@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SalesFood.Models;
 using SalesFood.Repositories.Interfaces;
 using SalesFood.ViewModels;
@@ -31,6 +32,7 @@ public class ShoppingCartController : Controller
         return View(shoppingCartViewModel);
     }
 
+    [Authorize]
     public IActionResult AddItemToShoppingCart(int foodId)
     {
         var selectedFood = _foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);
@@ -43,6 +45,7 @@ public class ShoppingCartController : Controller
         return RedirectToAction("Index");
     }
 
+    [Authorize]
     public IActionResult RemoveItemFromShoppingCart(int foodId)
     {
         var selectedFood = _foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);

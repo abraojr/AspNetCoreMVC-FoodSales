@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SalesFood.Models;
 using SalesFood.Repositories.Interfaces;
 
@@ -17,12 +18,14 @@ public class OrderController : Controller
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult Checkout()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult Checkout(Order order)
     {
         int totalOrderitems = 0;
