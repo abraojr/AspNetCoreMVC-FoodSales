@@ -51,4 +51,35 @@ public class AccountController : Controller
         ModelState.AddModelError("", "Login failed");
         return View(loginViewModel);
     }
+
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register(LoginViewModel registerViewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = new IdentityUser
+            {
+                UserName = registerViewModel.UserName,
+            };
+
+            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                ModelState.AddModelError("Register", "Register failed");
+            }
+        }
+
+        return View(registerViewModel);
+    }
 }
