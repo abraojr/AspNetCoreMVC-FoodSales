@@ -4,6 +4,7 @@ using SalesFood.Context;
 using SalesFood.Models;
 using SalesFood.Repositories;
 using SalesFood.Repositories.Interfaces;
+using SalesFood.Services;
 
 namespace SalesFood;
 public class Startup
@@ -27,6 +28,15 @@ public class Startup
         services.AddTransient<ICategoryRepository, CategoryRepository>();
         services.AddTransient<IFoodRepository, FoodRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+
+        services.AddAuthorization(opt =>
+        {
+            opt.AddPolicy("Admin", policy =>
+            {
+                policy.RequireRole("Admin");
+            });
+        });
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
@@ -38,7 +48,7 @@ public class Startup
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ISeedUserRoleInitial seedUserRoleInitial)
     {
         if (env.IsDevelopment())
         {
@@ -54,6 +64,9 @@ public class Startup
 
         app.UseStaticFiles();
         app.UseRouting();
+
+        seedUserRoleInitial.SeedRoles();
+        seedUserRoleInitial.SeedUsers();
 
         app.UseSession();
 
