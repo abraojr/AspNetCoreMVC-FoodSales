@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReflectionIT.Mvc.Paging;
+using SalesFood.Areas.Admin.Services;
 using SalesFood.Context;
 using SalesFood.Models;
 using SalesFood.Repositories;
@@ -30,6 +31,7 @@ public class Startup
         services.AddTransient<IFoodRepository, FoodRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+        services.AddScoped<SalesReportService>();
 
         services.AddAuthorization(opt =>
         {
