@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using SalesFood.Context;
 using SalesFood.Models;
 using SalesFood.Repositories;
@@ -42,6 +43,12 @@ public class Startup
         services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
 
         services.AddControllersWithViews();
+
+        services.AddPaging(opt =>
+        {
+            opt.ViewName = "Bootstrap4";
+            opt.PageParameterName = "pageindex";
+        });
 
         services.AddMemoryCache();
         services.AddSession();

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SalesFood.Context;
 using Microsoft.AspNetCore.Authorization;
 using SalesFood.Models;
+using ReflectionIT.Mvc.Paging;
 
 namespace SalesFood.Areas.Admin.Controllers;
 
@@ -19,10 +20,20 @@ public class AdminFoodsController : Controller
     }
 
     // GET: Admin/AdminFoods
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string filter, int pageindex = 1, string sort = "Name")
     {
-        var appDbContext = _context.Foods.Include(l => l.Category);
-        return View(await appDbContext.ToListAsync());
+        var result = _context.Foods.Include(l => l.Category).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            result = result.Where(p => p.Name.Contains(filter));
+        }
+
+        var model = await PagingList.CreateAsync(result, 5, pageindex, sort, "Name");
+
+        model.RouteValue = new RouteValueDictionary { { "filter", filter } };
+
+        return View(model);
     }
 
     // GET: Admin/AdminFoods/Details/5

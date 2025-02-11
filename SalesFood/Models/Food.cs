@@ -46,6 +46,7 @@ public class Food
     [Display(Name = "Stock")]
     public bool InStock { get; set; }
 
+    [Display(Name = "Categories")]
     public int CategoryId { get; set; }
     public virtual Category Category { get; set; }
 }

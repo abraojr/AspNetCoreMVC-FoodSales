@@ -1,10 +1,19 @@
-﻿@model IEnumerable<SalesFood.Models.Order>
+﻿@model ReflectionIT.Mvc.Paging.PagingList<SalesFood.Models.Order>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h3>Orders</h3>
+
+<form method="get" class="form-inline">
+    <input name="filter" class="form-control" placeholder="Filter" value="@Model.RouteValue["Filter"]" />
+    <button type="submit" class="btn btn-info">
+        <span class="glyphicon glyphicon-search" aria-hidden="true">Search</span>
+    </button>
+</form>
+
+Total records : @Model.TotalRecordCount
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -94,3 +103,6 @@
         }
     </tbody>
 </table>
+<div>
+    <vc:pager paging-list="@Model"></vc:pager>
+</div>
