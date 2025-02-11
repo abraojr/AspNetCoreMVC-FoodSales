@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ReflectionIT.Mvc.Paging;
 using SalesFood.Context;
 using SalesFood.Models;
+using SalesFood.ViewModels;
 
 namespace SalesFood.Areas.Admin.Controllers
 {
@@ -159,6 +160,28 @@ namespace SalesFood.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult OrderFoods(int? id)
+        {
+            var order = _context.Orders
+                            .Include(o => o.OrderItems)
+                            .ThenInclude(f => f.Food)
+                            .FirstOrDefault(p => p.OrderId == id);
+
+            if (order == null)
+            {
+                Response.StatusCode = 404;
+                return View("OrderNotFound", id.Value);
+            }
+
+            OrderFoodViewModel orderFoods = new()
+            {
+                Order = order,
+                OrderDetails = order.OrderItems
+            };
+
+            return View(orderFoods);
         }
 
         private bool OrderExists(int id)
