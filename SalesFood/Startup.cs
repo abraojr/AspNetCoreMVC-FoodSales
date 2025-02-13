@@ -27,6 +27,8 @@ public class Startup
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+        services.Configure<ConfigurationImages>(Configuration.GetSection("ConfigurationImagesFolder"));
+
         services.AddTransient<ICategoryRepository, CategoryRepository>();
         services.AddTransient<IFoodRepository, FoodRepository>();
         services.AddTransient<IOrderRepository, OrderRepository>();
