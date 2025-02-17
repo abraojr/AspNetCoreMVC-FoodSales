@@ -1,0 +1,60 @@
+﻿<title>
+    @ViewData["Title"] - Sales Chart
+</title>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+<script type="text/javascript">
+
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(LoadData);
+
+        function LoadData() {
+        $.ajax({
+            url: '@Url.Action("ProductSales", "AdminChart")',
+            data: { days: 360 },
+            dataType: "json",
+            type: "GET",
+            error: function(xhr, status, error) {
+                var errMsg = xhr.responseJSON ? xhr.responseJSON.message : "An error occurred.";
+                toastr.error(errMsg);
+            },
+            success: function(data) {
+                ProductSalesChart(data);
+            }
+        });
+        return false;
+    }
+
+    function ProductSalesChart(data) {
+        var dataArray = [
+            ['Product', 'Quantity', 'Values($)']
+        ];
+
+        $.each(data, function(i, item) {
+            dataArray.push([item.productName, item.productQuantity, item.productTotalValue]);
+        });
+
+        var chartData = google.visualization.arrayToDataTable(dataArray);
+
+        var options = {
+            title: 'Products - Sales over the last 360 days',
+            chartArea: {
+                width: '70%'
+            },
+            colors: ['#5202b5', '#d2a828'],
+            hAxis: {
+                title: 'Total Value',
+                minValue: 0
+            },
+            vAxis: {
+                title: 'Products'
+            }
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+        chart.draw(chartData, options);
+    }
+</script>
