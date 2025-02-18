@@ -33,9 +33,14 @@
             ['Product', 'Quantity', 'Values($)']
         ];
 
-        $.each(data, function(i, item) {
-            dataArray.push([item.productName, item.productQuantity, item.productTotalValue]);
-        });
+       if (data.length === 0) {
+           dataArray.push(["No sales", 0, 0]);
+           toastr.warning("No sales data available for the last 7 days.");
+       } else {
+           $.each(data, function(i, item) {
+               dataArray.push([item.productName, item.productQuantity, item.productTotalValue]);
+           });
+       }
 
         var chartData = google.visualization.arrayToDataTable(dataArray);
 
