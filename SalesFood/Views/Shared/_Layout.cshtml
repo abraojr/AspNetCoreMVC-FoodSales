@@ -10,42 +10,18 @@
     <link rel="stylesheet" href="~/SalesFood.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo_lanche2-sfd.png" />
-                    SalesFood
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    @await Component.InvokeAsync("ShoppingCartSummary")
-                    @await Component.InvokeAsync("CategoryMenu")
-                    <a class="nav-link text-light" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
-                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    <form class="navbar-form navbar-right" asp-controller="Food" asp-action="Search" method="get">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Find product" name="searchString" value="@ViewData["searchString"]" />
-                        </div>
-                    </form>
-                    @await Html.PartialAsync("_LoginPartial")
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a>
-                    }
-                </div>
-            </div>
-        </nav>
-    </header>
+    <div>
+        <partial name="_MenuBar" />
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    <partial name="_Footer" />
+    <div>
+        <partial name="_Footer" />
+    </div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

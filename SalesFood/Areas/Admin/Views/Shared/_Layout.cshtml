@@ -13,8 +13,8 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
+                    <a class="navbar-brand" asp-area="Admin" asp-controller="Admin" asp-action="Index">Home</a>
                     <a class="nav-link text-light" asp-area="Admin" asp-controller="AdminFoods" asp-action="Index">Products</a>
                     <a class="nav-link text-light" asp-area="Admin" asp-controller="AdminCategories" asp-action="Index">Categories</a>
                     <a class="nav-link text-light" asp-area="Admin" asp-controller="AdminOrders" asp-action="Index">Orders</a>
@@ -39,8 +39,9 @@
             @RenderBody()
         </main>
     </div>
-
-    <partial name="_Footer" />
+    <div>
+        <partial name="_Footer" />
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
