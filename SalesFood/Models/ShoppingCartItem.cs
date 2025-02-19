@@ -13,4 +13,3 @@ public class ShoppingCartItem
     [StringLength(200)]
     public string ShoppingCartId { get; set; }
 }
-

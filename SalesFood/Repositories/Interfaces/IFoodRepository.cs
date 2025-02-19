@@ -8,4 +8,3 @@ public interface IFoodRepository
     IEnumerable<Food> FavoriteFoods { get; }
     Food GetFoodById(int id);
 }
-

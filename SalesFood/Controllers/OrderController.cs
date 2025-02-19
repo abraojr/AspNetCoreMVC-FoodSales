@@ -5,18 +5,8 @@ using SalesFood.Repositories.Interfaces;
 
 namespace SalesFood.Controllers;
 
-public class OrderController : Controller
+public class OrderController(IOrderRepository orderRepository, ShoppingCart shoppingCart) : Controller
 {
-
-    private readonly IOrderRepository _orderRepository;
-    private readonly ShoppingCart _shoppingCart;
-
-    public OrderController(IOrderRepository orderRepository, ShoppingCart shoppingCart)
-    {
-        _orderRepository = orderRepository;
-        _shoppingCart = shoppingCart;
-    }
-
     [HttpGet]
     [Authorize]
     public IActionResult Checkout()
@@ -32,11 +22,11 @@ public class OrderController : Controller
         decimal totalPrice = 0.0m;
 
         // Gets the items from the customer's shopping cart
-        List<ShoppingCartItem> items = _shoppingCart.GetShoppingCartItems();
-        _shoppingCart.ShoppingCartItems = items;
+        List<ShoppingCartItem> items = shoppingCart.GetShoppingCartItems();
+        shoppingCart.ShoppingCartItems = items;
 
         // Checks for order items
-        if (_shoppingCart.ShoppingCartItems.Count == 0)
+        if (shoppingCart.ShoppingCartItems.Count == 0)
         {
             ModelState.AddModelError("", "Your shopping cart is empty");
         }
@@ -56,14 +46,14 @@ public class OrderController : Controller
         if (ModelState.IsValid)
         {
             // Create the order and details
-            _orderRepository.CreateOrder(order);
+            orderRepository.CreateOrder(order);
 
             // Set messages to the client
             ViewBag.CompleteCheckoutMessage = "Thanks for your order :)";
-            ViewBag.TotalOrder = _shoppingCart.GetShoppingCartTotal();
+            ViewBag.TotalOrder = shoppingCart.GetShoppingCartTotal();
 
             // Clear the customer's shopping cart
-            _shoppingCart.ClearShoppinCart();
+            shoppingCart.ClearShoppinCart();
 
             // Displays the view with customer and order data
             return View("~/Views/Order/CompleteCheckout.cshtml", order);

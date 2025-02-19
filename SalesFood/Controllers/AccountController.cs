@@ -4,17 +4,8 @@ using SalesFood.ViewModels;
 
 namespace SalesFood.Controllers;
 
-public class AccountController : Controller
+public class AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager) : Controller
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
-
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-    }
-
     public IActionResult Login(string returnUrl)
     {
         return View(new LoginViewModel()
@@ -31,11 +22,11 @@ public class AccountController : Controller
             return View(loginViewModel);
         }
 
-        var user = await _userManager.FindByNameAsync(loginViewModel.UserName);
+        var user = await userManager.FindByNameAsync(loginViewModel.UserName);
 
         if (user != null)
         {
-            var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
+            var result = await signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
 
             if (result.Succeeded)
             {
@@ -68,11 +59,11 @@ public class AccountController : Controller
                 UserName = registerViewModel.UserName,
             };
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+            var result = await userManager.CreateAsync(user, registerViewModel.Password);
 
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "Member");
+                await userManager.AddToRoleAsync(user, "Member");
                 return RedirectToAction("Login", "Account");
             }
             else
@@ -90,7 +81,7 @@ public class AccountController : Controller
         HttpContext.Session.Clear();
         HttpContext.User = null;
 
-        await _signInManager.SignOutAsync();
+        await signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 

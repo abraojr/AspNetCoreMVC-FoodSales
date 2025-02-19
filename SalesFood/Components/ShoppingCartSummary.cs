@@ -4,28 +4,20 @@ using SalesFood.ViewModels;
 
 namespace SalesFood.Components;
 
-public class ShoppingCartSummary : ViewComponent
+public class ShoppingCartSummary(ShoppingCart shoppingCart) : ViewComponent
 {
-    private readonly ShoppingCart _shoppingCart;
-
-    public ShoppingCartSummary(ShoppingCart shoppingCart)
-    {
-        _shoppingCart = shoppingCart;
-    }
-
     public IViewComponentResult Invoke()
     {
-        var items = _shoppingCart.GetShoppingCartItems();
+        var items = shoppingCart.GetShoppingCartItems();
 
-        _shoppingCart.ShoppingCartItems = items;
+        shoppingCart.ShoppingCartItems = items;
 
         var shoppingCartViewModel = new ShoppingCartViewModel
         {
-            ShoppingCart = _shoppingCart,
-            ShoppingCartTotal = _shoppingCart.GetShoppingCartTotal()
+            ShoppingCart = shoppingCart,
+            ShoppingCartTotal = shoppingCart.GetShoppingCartTotal()
         };
 
         return View(shoppingCartViewModel);
     }
 }
-

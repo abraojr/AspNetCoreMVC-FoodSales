@@ -6,20 +6,13 @@ using SalesFood.ViewModels;
 
 namespace SalesFood.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IFoodRepository foodRepository) : Controller
 {
-    private readonly IFoodRepository _foodRepository;
-
-    public HomeController(IFoodRepository foodRepository)
-    {
-        _foodRepository = foodRepository;
-    }
-
     public IActionResult Index()
     {
         var homeViewModel = new HomeViewModel
         {
-            FavoriteFoods = _foodRepository.FavoriteFoods
+            FavoriteFoods = foodRepository.FavoriteFoods
         };
 
         return View(homeViewModel);
@@ -31,4 +24,3 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
-

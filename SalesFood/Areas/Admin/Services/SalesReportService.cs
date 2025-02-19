@@ -4,18 +4,11 @@ using SalesFood.Models;
 
 namespace SalesFood.Areas.Admin.Services;
 
-public class SalesReportService
+public class SalesReportService(AppDbContext context)
 {
-    private readonly AppDbContext _context;
-
-    public SalesReportService(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<List<Order>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
     {
-        var result = from obj in _context.Orders
+        var result = from obj in context.Orders
                      select obj;
 
         if (minDate.HasValue)

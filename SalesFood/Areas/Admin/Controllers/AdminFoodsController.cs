@@ -10,19 +10,13 @@ namespace SalesFood.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-public class AdminFoodsController : Controller
+public class AdminFoodsController(AppDbContext context) : Controller
 {
-    private readonly AppDbContext _context;
-
-    public AdminFoodsController(AppDbContext context)
-    {
-        _context = context;
-    }
 
     // GET: Admin/AdminFoods
     public async Task<IActionResult> Index(string filter, int pageindex = 1, string sort = "Name")
     {
-        var result = _context.Foods.Include(l => l.Category).AsQueryable();
+        var result = context.Foods.Include(l => l.Category).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filter))
         {
@@ -44,7 +38,7 @@ public class AdminFoodsController : Controller
             return NotFound();
         }
 
-        var food = await _context.Foods
+        var food = await context.Foods
             .Include(l => l.Category)
             .FirstOrDefaultAsync(m => m.FoodId == id);
 
@@ -59,7 +53,7 @@ public class AdminFoodsController : Controller
     // GET: Admin/AdminFoods/Create
     public IActionResult Create()
     {
-        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
+        ViewData["CategoryId"] = new SelectList(context.Categories, "CategoryId", "Name");
         return View();
     }
 
@@ -72,12 +66,12 @@ public class AdminFoodsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(food);
-            await _context.SaveChangesAsync();
+            context.Add(food);
+            await context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", food.CategoryId);
+        ViewData["CategoryId"] = new SelectList(context.Categories, "CategoryId", "Name", food.CategoryId);
         return View(food);
     }
 
@@ -89,14 +83,14 @@ public class AdminFoodsController : Controller
             return NotFound();
         }
 
-        var food = await _context.Foods.FindAsync(id);
+        var food = await context.Foods.FindAsync(id);
 
         if (food == null)
         {
             return NotFound();
         }
 
-        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", food.CategoryId);
+        ViewData["CategoryId"] = new SelectList(context.Categories, "CategoryId", "Name", food.CategoryId);
         return View(food);
     }
 
@@ -116,8 +110,8 @@ public class AdminFoodsController : Controller
         {
             try
             {
-                _context.Update(food);
-                await _context.SaveChangesAsync();
+                context.Update(food);
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -133,7 +127,7 @@ public class AdminFoodsController : Controller
             return RedirectToAction("Index");
         }
 
-        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", food.CategoryId);
+        ViewData["CategoryId"] = new SelectList(context.Categories, "CategoryId", "Name", food.CategoryId);
         return View(food);
     }
 
@@ -145,7 +139,7 @@ public class AdminFoodsController : Controller
             return NotFound();
         }
 
-        var food = await _context.Foods
+        var food = await context.Foods
             .Include(l => l.Category)
             .FirstOrDefaultAsync(m => m.FoodId == id);
 
@@ -162,17 +156,17 @@ public class AdminFoodsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var food = await _context.Foods.FindAsync(id);
+        var food = await context.Foods.FindAsync(id);
 
-        _context.Foods.Remove(food);
+        context.Foods.Remove(food);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return RedirectToAction("Index");
     }
 
     private bool FoodExists(int id)
     {
-        return _context.Foods.Any(e => e.FoodId == id);
+        return context.Foods.Any(e => e.FoodId == id);
     }
 }

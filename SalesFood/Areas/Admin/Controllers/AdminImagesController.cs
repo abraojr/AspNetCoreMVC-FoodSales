@@ -7,16 +7,9 @@ namespace SalesFood.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-public class AdminImagesController : Controller
+public class AdminImagesController(IWebHostEnvironment hostEnv, IOptions<ConfigurationImages> myConfig) : Controller
 {
-    private readonly IWebHostEnvironment _hostingEnv;
-    private readonly ConfigurationImages _myConfig;
-
-    public AdminImagesController(IWebHostEnvironment hostEnv, IOptions<ConfigurationImages> myConfig)
-    {
-        _hostingEnv = hostEnv;
-        _myConfig = myConfig.Value;
-    }
+    private readonly ConfigurationImages _myConfig = myConfig.Value;
 
     public IActionResult Index()
     {
@@ -37,27 +30,35 @@ public class AdminImagesController : Controller
             return View(ViewData);
         }
 
-        long size = files.Sum(f => f.Length);
-        var filePathsName = new List<string>();
-        var filePath = Path.Combine(_hostingEnv.WebRootPath, _myConfig.NameImagesFolderProducts);
-
-        foreach (var formFile in files)
+        try
         {
-            if (formFile.FileName.Contains(".jpg") || formFile.FileName.Contains(".gif") ||
-                formFile.FileName.Contains(".png"))
+
+            long size = files.Sum(f => f.Length);
+            var filePathsName = new List<string>();
+            var filePath = Path.Combine(hostEnv.WebRootPath, _myConfig.NameImagesFolderProducts);
+
+            foreach (var formFile in files)
             {
-                var fileNameWithPath = string.Concat(filePath, "\\", formFile.FileName);
+                if (formFile.FileName.Contains(".jpg") || formFile.FileName.Contains(".gif") ||
+                    formFile.FileName.Contains(".png"))
+                {
+                    var fileNameWithPath = string.Concat(filePath, "\\", formFile.FileName);
 
-                filePathsName.Add(fileNameWithPath);
+                    filePathsName.Add(fileNameWithPath);
 
-                using var stream = new FileStream(fileNameWithPath, FileMode.Create);
-                await formFile.CopyToAsync(stream);
+                    using var stream = new FileStream(fileNameWithPath, FileMode.Create);
+                    await formFile.CopyToAsync(stream);
+                }
             }
+
+            ViewData["Result"] = $"{files.Count} files have been uploaded to the server, with a total size of : {size} bytes";
+
+            ViewBag.Files = filePathsName;
         }
-
-        ViewData["Result"] = $"{files.Count} files have been uploaded to the server, with a total size of : {size} bytes";
-
-        ViewBag.Files = filePathsName;
+        catch (Exception ex)
+        {
+            ViewData["Error"] = $"Error: {ex.Message}";
+        }
 
         return View(ViewData);
     }
@@ -66,31 +67,45 @@ public class AdminImagesController : Controller
     {
         FileManagerModel model = new();
 
-        var userImagesPath = Path.Combine(_hostingEnv.WebRootPath, _myConfig.NameImagesFolderProducts);
-
-        DirectoryInfo directory = new(userImagesPath);
-        FileInfo[] files = directory.GetFiles();
-
-        model.PathImagesProduct = _myConfig.NameImagesFolderProducts;
-
-        if (files.Length == 0)
+        try
         {
-            ViewData["Error"] = $"No files found in {userImagesPath} folder";
-        }
+            var userImagesPath = Path.Combine(hostEnv.WebRootPath, _myConfig.NameImagesFolderProducts);
 
-        model.Files = files;
+            DirectoryInfo directory = new(userImagesPath);
+            FileInfo[] files = directory.GetFiles();
+
+            model.PathImagesProduct = _myConfig.NameImagesFolderProducts;
+
+            if (files.Length == 0)
+            {
+                ViewData["Error"] = $"No files found in {userImagesPath} folder";
+            }
+
+            model.Files = files;
+        }
+        catch (Exception ex)
+        {
+            ViewData["Error"] = $"Error: {ex.Message}";
+        }
 
         return View(model);
     }
 
     public IActionResult DeleteFile(string fileName)
     {
-        string deletedImage = Path.Combine(_hostingEnv.WebRootPath, _myConfig.NameImagesFolderProducts + "\\", fileName);
-
-        if (System.IO.File.Exists(deletedImage))
+        try
         {
-            System.IO.File.Delete(deletedImage);
-            ViewData["Deleted"] = $"File(s) {deletedImage} successfully deleted";
+            string deletedImage = Path.Combine(hostEnv.WebRootPath, _myConfig.NameImagesFolderProducts + "\\", fileName);
+
+            if (System.IO.File.Exists(deletedImage))
+            {
+                System.IO.File.Delete(deletedImage);
+                ViewData["Deleted"] = $"File(s) {deletedImage} successfully deleted";
+            }
+        }
+        catch (Exception ex)
+        {
+            ViewData["Error"] = $"Error: {ex.Message}";
         }
 
         return View("Index");

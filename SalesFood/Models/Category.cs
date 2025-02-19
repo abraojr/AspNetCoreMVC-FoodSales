@@ -21,4 +21,3 @@ public class Category
 
     public List<Food> Foods { get; set; }
 }
-

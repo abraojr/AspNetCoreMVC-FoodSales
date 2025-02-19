@@ -2,20 +2,11 @@
 
 namespace SalesFood.Services;
 
-public class SeedUserRoleInitial : ISeedUserRoleInitial
+public class SeedUserRoleInitial(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) : ISeedUserRoleInitial
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-
-    public SeedUserRoleInitial(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
-
     public void SeedRoles()
     {
-        if (!_roleManager.RoleExistsAsync("Member").Result)
+        if (!roleManager.RoleExistsAsync("Member").Result)
         {
             IdentityRole role = new()
             {
@@ -23,23 +14,23 @@ public class SeedUserRoleInitial : ISeedUserRoleInitial
                 NormalizedName = "MEMBER"
             };
 
-            _roleManager.CreateAsync(role);
+            roleManager.CreateAsync(role);
         }
 
-        if (!_roleManager.RoleExistsAsync("Admin").Result)
+        if (!roleManager.RoleExistsAsync("Admin").Result)
         {
             IdentityRole role = new()
             {
                 Name = "Admin",
                 NormalizedName = "ADMIN"
             };
-            _ = _roleManager.CreateAsync(role).Result;
+            _ = roleManager.CreateAsync(role).Result;
         }
     }
 
     public void SeedUsers()
     {
-        if (_userManager.FindByEmailAsync("user@localhost").Result == null)
+        if (userManager.FindByEmailAsync("user@localhost").Result == null)
         {
             IdentityUser user = new()
             {
@@ -52,15 +43,15 @@ public class SeedUserRoleInitial : ISeedUserRoleInitial
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            IdentityResult result = _userManager.CreateAsync(user, "Numsey#2025").Result;
+            IdentityResult result = userManager.CreateAsync(user, "Numsey#2025").Result;
 
             if (result.Succeeded)
             {
-                _userManager.AddToRoleAsync(user, "Member").Wait();
+                userManager.AddToRoleAsync(user, "Member").Wait();
             }
         }
 
-        if (_userManager.FindByEmailAsync("admin@localhost").Result == null)
+        if (userManager.FindByEmailAsync("admin@localhost").Result == null)
         {
             IdentityUser user = new()
             {
@@ -73,11 +64,11 @@ public class SeedUserRoleInitial : ISeedUserRoleInitial
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            IdentityResult result = _userManager.CreateAsync(user, "Numsey#2025").Result;
+            IdentityResult result = userManager.CreateAsync(user, "Numsey#2025").Result;
 
             if (result.Succeeded)
             {
-                _userManager.AddToRoleAsync(user, "Admin").Wait();
+                userManager.AddToRoleAsync(user, "Admin").Wait();
             }
         }
     }

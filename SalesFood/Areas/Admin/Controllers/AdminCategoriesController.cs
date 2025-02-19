@@ -8,19 +8,13 @@ namespace SalesFood.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-public class AdminCategoriesController : Controller
+public class AdminCategoriesController(AppDbContext context) : Controller
 {
-    private readonly AppDbContext _context;
-
-    public AdminCategoriesController(AppDbContext context)
-    {
-        _context = context;
-    }
 
     // GET: Admin/AdminCategories
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Categories.ToListAsync());
+        return View(await context.Categories.ToListAsync());
     }
 
     // GET: Admin/AdminCategories/Details/5
@@ -31,7 +25,7 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
+        var category = await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
 
         if (category == null)
         {
@@ -56,8 +50,8 @@ public class AdminCategoriesController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(category);
-            await _context.SaveChangesAsync();
+            context.Add(category);
+            await context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
@@ -72,7 +66,7 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories.FindAsync(id);
+        var category = await context.Categories.FindAsync(id);
 
         if (category == null)
         {
@@ -98,8 +92,8 @@ public class AdminCategoriesController : Controller
         {
             try
             {
-                _context.Update(category);
-                await _context.SaveChangesAsync();
+                context.Update(category);
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -127,7 +121,7 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
-        var category = await _context.Categories.FirstOrDefaultAsync(m => m.CategoryId == id);
+        var category = await context.Categories.FirstOrDefaultAsync(m => m.CategoryId == id);
 
         if (category == null)
         {
@@ -142,17 +136,17 @@ public class AdminCategoriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var category = await _context.Categories.FindAsync(id);
+        var category = await context.Categories.FindAsync(id);
 
-        _context.Categories.Remove(category);
+        context.Categories.Remove(category);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return RedirectToAction("Index");
     }
 
     private bool CategoryExists(int id)
     {
-        return _context.Categories.Any(e => e.CategoryId == id);
+        return context.Categories.Any(e => e.CategoryId == id);
     }
 }

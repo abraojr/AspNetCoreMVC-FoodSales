@@ -4,14 +4,9 @@ using SalesFood.Areas.Admin.Services;
 namespace SalesFood.Areas.Admin.Controllers;
 
 [Area("Admin")]
-public class AdminChartController : Controller
+public class AdminChartController(SalesChartService salesChart) : Controller
 {
-    private readonly SalesChartService _salesChart;
-
-    public AdminChartController(SalesChartService salesChart)
-    {
-        _salesChart = salesChart ?? throw new ArgumentNullException(nameof(salesChart));
-    }
+    private readonly SalesChartService _salesChart = salesChart ?? throw new ArgumentNullException(nameof(salesChart));
 
     public JsonResult ProductSales(int days)
     {

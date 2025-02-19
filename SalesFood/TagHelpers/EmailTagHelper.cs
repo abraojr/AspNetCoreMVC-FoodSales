@@ -14,4 +14,3 @@ public class EmailTagHelper : TagHelper
         output.Content.SetContent(Content);
     }
 }
-

@@ -5,15 +5,8 @@ using SalesFood.ViewModels;
 
 namespace SalesFood.Controllers;
 
-public class FoodController : Controller
+public class FoodController(IFoodRepository foodRepository) : Controller
 {
-    private readonly IFoodRepository _foodRepository;
-
-    public FoodController(IFoodRepository foodRepository)
-    {
-        _foodRepository = foodRepository;
-    }
-
     public IActionResult List(string category)
     {
         IEnumerable<Food> foods;
@@ -21,12 +14,12 @@ public class FoodController : Controller
 
         if (string.IsNullOrEmpty(category))
         {
-            foods = _foodRepository.Foods.OrderBy(x => x.FoodId);
+            foods = foodRepository.Foods.OrderBy(x => x.FoodId);
             currentCategory = "All Products";
         }
         else
         {
-            foods = _foodRepository.Foods
+            foods = foodRepository.Foods
                            .Where(x => x.Category.Name.Equals(category))
                            .OrderBy(x => x.Name);
 
@@ -44,7 +37,7 @@ public class FoodController : Controller
 
     public IActionResult Details(int foodId)
     {
-        var food = _foodRepository.Foods.FirstOrDefault(x => x.FoodId == foodId);
+        var food = foodRepository.Foods.FirstOrDefault(x => x.FoodId == foodId);
 
         return View(food);
     }
@@ -56,12 +49,12 @@ public class FoodController : Controller
 
         if (string.IsNullOrEmpty(searchString))
         {
-            foods = _foodRepository.Foods.OrderBy(x => x.FoodId);
+            foods = foodRepository.Foods.OrderBy(x => x.FoodId);
             currentCategory = "All Food";
         }
         else
         {
-            foods = _foodRepository.Foods
+            foods = foodRepository.Foods
                         .Where(x => x.Name.ToLower().Contains(searchString.ToLower()));
 
             if (foods.Any())

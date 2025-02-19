@@ -6,4 +6,3 @@ public class HomeViewModel
 {
     public IEnumerable<Food> FavoriteFoods { get; set; }
 }
-

@@ -6,27 +6,18 @@ using SalesFood.ViewModels;
 
 namespace SalesFood.Controllers;
 
-public class ShoppingCartController : Controller
+public class ShoppingCartController(IFoodRepository foodRepository, ShoppingCart shoppingCart) : Controller
 {
-    private readonly IFoodRepository _foodRepository;
-    private readonly ShoppingCart _shoppingCart;
-
-    public ShoppingCartController(IFoodRepository foodRepository, ShoppingCart shoppingCart)
-    {
-        _foodRepository = foodRepository;
-        _shoppingCart = shoppingCart;
-    }
-
     public IActionResult Index()
     {
-        var items = _shoppingCart.GetShoppingCartItems();
+        var items = shoppingCart.GetShoppingCartItems();
 
-        _shoppingCart.ShoppingCartItems = items;
+        shoppingCart.ShoppingCartItems = items;
 
         var shoppingCartViewModel = new ShoppingCartViewModel
         {
-            ShoppingCart = _shoppingCart,
-            ShoppingCartTotal = _shoppingCart.GetShoppingCartTotal()
+            ShoppingCart = shoppingCart,
+            ShoppingCartTotal = shoppingCart.GetShoppingCartTotal()
         };
 
         return View(shoppingCartViewModel);
@@ -35,11 +26,11 @@ public class ShoppingCartController : Controller
     [Authorize]
     public IActionResult AddItemToShoppingCart(int foodId)
     {
-        var selectedFood = _foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);
+        var selectedFood = foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);
 
         if (selectedFood != null)
         {
-            _shoppingCart.AddToShoppingCart(selectedFood);
+            shoppingCart.AddToShoppingCart(selectedFood);
         }
 
         return RedirectToAction("Index");
@@ -48,14 +39,13 @@ public class ShoppingCartController : Controller
     [Authorize]
     public IActionResult RemoveItemFromShoppingCart(int foodId)
     {
-        var selectedFood = _foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);
+        var selectedFood = foodRepository.Foods.FirstOrDefault(p => p.FoodId == foodId);
 
         if (selectedFood != null)
         {
-            _shoppingCart.RemoveFromShoppingCart(selectedFood);
+            shoppingCart.RemoveFromShoppingCart(selectedFood);
         }
 
         return RedirectToAction("Index");
     }
 }
-

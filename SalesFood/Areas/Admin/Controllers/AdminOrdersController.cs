@@ -10,19 +10,13 @@ namespace SalesFood.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin")]
-    public class AdminOrdersController : Controller
+    public class AdminOrdersController(AppDbContext context) : Controller
     {
-        private readonly AppDbContext _context;
-
-        public AdminOrdersController(AppDbContext context)
-        {
-            _context = context;
-        }
 
         // GET: Admin/AdminOrders
         public async Task<IActionResult> Index(string filter, int pageindex = 1, string sort = "Name")
         {
-            var result = _context.Orders.AsNoTracking().AsQueryable();
+            var result = context.Orders.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter))
             {
@@ -44,7 +38,7 @@ namespace SalesFood.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
+            var order = await context.Orders
                 .FirstOrDefaultAsync(m => m.OrderId == id);
 
             if (order == null)
@@ -70,8 +64,8 @@ namespace SalesFood.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
+                context.Add(order);
+                await context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(order);
@@ -85,7 +79,7 @@ namespace SalesFood.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders.FindAsync(id);
+            var order = await context.Orders.FindAsync(id);
 
             if (order == null)
             {
@@ -110,8 +104,8 @@ namespace SalesFood.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
+                    context.Update(order);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -137,7 +131,7 @@ namespace SalesFood.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Orders
+            var order = await context.Orders
                 .FirstOrDefaultAsync(m => m.OrderId == id);
 
             if (order == null)
@@ -153,18 +147,18 @@ namespace SalesFood.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await context.Orders.FindAsync(id);
 
-            _context.Orders.Remove(order);
+            context.Orders.Remove(order);
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return RedirectToAction("Index");
         }
 
         public IActionResult OrderFoods(int? id)
         {
-            var order = _context.Orders
+            var order = context.Orders
                             .Include(o => o.OrderItems)
                             .ThenInclude(f => f.Food)
                             .FirstOrDefault(p => p.OrderId == id);
@@ -186,7 +180,7 @@ namespace SalesFood.Areas.Admin.Controllers
 
         private bool OrderExists(int id)
         {
-            return _context.Orders.Any(e => e.OrderId == id);
+            return context.Orders.Any(e => e.OrderId == id);
         }
     }
 }
